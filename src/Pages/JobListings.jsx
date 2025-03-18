@@ -43,16 +43,16 @@ const JobListings = () => {
     }, []);
 
     return (
-        <Panel 
-        bordered 
-        header="Job Listings"
-        shaded
-        style={{
-            margin: "auto",
-            marginTop: "2vh",
-            width: '100%',
-            height: 'auto'
-        }}
+        <Panel
+            bordered
+            header="Job Listings"
+            shaded
+            style={{
+                margin: "auto",
+                marginTop: "2vh",
+                width: '100%',
+                height: 'auto'
+            }}
         >
             <Table data={jobs} autoHeight bordered>
                 <Column width={100} align="center">
@@ -75,15 +75,14 @@ const JobListings = () => {
                     <HeaderCell>Payment (ETH)</HeaderCell>
                     <Cell>{(rowData) => rowData.payment}</Cell>
                 </Column>
-                {/* Uncomment the following columns if you want to include them */}
-                {/* <Column width={100}>
-      <HeaderCell>Completed</HeaderCell>
-      <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
-    </Column>
-    <Column width={100}>
-      <HeaderCell>Paid</HeaderCell>
-      <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
-    </Column> */}
+                <Column width={100}>
+                    <HeaderCell>Completed</HeaderCell>
+                    <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
+                </Column>
+                <Column width={100}>
+                    <HeaderCell>Paid</HeaderCell>
+                    <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
+                </Column>
             </Table>
         </Panel>
     );
