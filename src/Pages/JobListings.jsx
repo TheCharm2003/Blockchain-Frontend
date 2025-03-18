@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Container, Panel, Row, Col } from "rsuite";
+import { Panel, Table } from "rsuite";
 import { toast } from "react-toastify";
 import { getBlockchain } from "../Components/Blockchain";
 import { ethers } from "ethers";
+const { Column, HeaderCell, Cell } = Table;
 
 const JobListings = () => {
     const [jobs, setJobs] = useState([]);
@@ -14,14 +15,11 @@ const JobListings = () => {
             try {
                 const { contract } = await getBlockchain();
                 const jobCount = Number(await contract.jobCounter());
-
                 const jobPromises = [];
                 for (let i = 1; i < jobCount; i++) {
                     jobPromises.push(contract.getJob(i));
                 }
-
                 const jobData = await Promise.all(jobPromises);
-
                 const formattedJobs = jobData.map((job, index) => ({
                     id: index + 1,
                     client: job[0],
@@ -30,8 +28,9 @@ const JobListings = () => {
                     payment: ethers.formatEther(job[3]),
                     isCompleted: job[4],
                     isPaid: job[5],
+                    cilentRated: job[6],
+                    workedRated: job[7],
                 }));
-
                 setJobs(formattedJobs);
             } catch (error) {
                 console.error("Error fetching jobs:", error);
@@ -40,70 +39,53 @@ const JobListings = () => {
                 setLoading(false);
             }
         };
-
         fetchJobs();
-
-        const listenForJobPosts = async () => {
-            try {
-                const { contract } = await getBlockchain();
-
-                contract.on("JobPosted", (jobId, client, description, payment) => {
-                    toast.info(`New job posted: ${description}`);
-                    fetchJobs();
-                });
-
-                return () => {
-                    contract.off("JobPosted");
-                };
-            } catch (error) {
-                console.error("Error setting up event listener:", error);
-            }
-        };
-
-        listenForJobPosts();
-
     }, []);
 
-    if (loading) {
-        return <Container>Loading jobs...</Container>;
-    }
-
-    if (loading) {
-        return <Container>Loading jobs...</Container>;
-    }
-
     return (
-        <Container>
-            <Panel bordered header="Job Listings">
-                {jobs.map((job, index) => (
-                    <Panel key={index} bordered style={{ marginBottom: "10px", padding: "15px" }}>
-                        <Row style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
-                            <Col style={{ flex: "1 1 150px" }}>
-                                <strong>ID:</strong> {job.id}
-                            </Col>
-                            <Col style={{ flex: "1 1 200px" }}>
-                                <strong>Client:</strong> {job.client}
-                            </Col>
-                            <Col style={{ flex: "1 1 200px" }}>
-                                <strong>Worker:</strong> {job.worker}
-                            </Col>
-                            <Col style={{ flex: "2 1 300px" }}>
-                                <strong>Description:</strong> {job.description}
-                            </Col>
-                            <Col style={{ flex: "1 1 120px" }}>
-                                <strong>Payment (ETH):</strong> {job.payment}
-                            </Col>
-                            <Col style={{ flex: "1 1 100px" }}>
-                                <strong>Completed:</strong> {job.isCompleted ? "Yes" : "No"}
-                            </Col>
-                            <Col style={{ flex: "1 1 100px" }}>
-                                <strong>Paid:</strong> {job.isPaid ? "Yes" : "No"}
-                            </Col>
-                        </Row>
-                    </Panel>
-                ))}
-            </Panel>
-        </Container>
+        <Panel 
+        bordered 
+        header="Job Listings"
+        shaded
+        style={{
+            margin: "auto",
+            marginTop: "2vh",
+            width: '100%',
+            height: 'auto'
+        }}
+        >
+            <Table data={jobs} autoHeight bordered>
+                <Column width={100} align="center">
+                    <HeaderCell>ID</HeaderCell>
+                    <Cell>{(rowData) => rowData.id}</Cell>
+                </Column>
+                <Column width={200}>
+                    <HeaderCell>Client</HeaderCell>
+                    <Cell>{(rowData) => rowData.client}</Cell>
+                </Column>
+                <Column width={200}>
+                    <HeaderCell>Worker</HeaderCell>
+                    <Cell>{(rowData) => rowData.worker}</Cell>
+                </Column>
+                <Column width={300}>
+                    <HeaderCell>Description</HeaderCell>
+                    <Cell>{(rowData) => rowData.description}</Cell>
+                </Column>
+                <Column width={120} align="center">
+                    <HeaderCell>Payment (ETH)</HeaderCell>
+                    <Cell>{(rowData) => rowData.payment}</Cell>
+                </Column>
+                {/* Uncomment the following columns if you want to include them */}
+                {/* <Column width={100}>
+      <HeaderCell>Completed</HeaderCell>
+      <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
+    </Column>
+    <Column width={100}>
+      <HeaderCell>Paid</HeaderCell>
+      <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
+    </Column> */}
+            </Table>
+        </Panel>
     );
 };
 

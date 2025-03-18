@@ -12,7 +12,9 @@ const Rating = () => {
     const [loading, setLoading] = useState(false);
     const [ratingLoading, setRatingLoading] = useState(false);
     const [address, setAddress] = useState();
-
+    const [statsrating, setStatRating] = useState();
+    const [tasks, setTask] = useState();
+    const [pressed, setPressed] = useState();
 
     const handleRateClient = async () => {
         if (!jobId || !rating) {
@@ -67,6 +69,9 @@ const Rating = () => {
         try {
             const { contract } = await getBlockchain();
             const tx = await contract.getWorkerStats(address);
+            setPressed(true);
+            setStatRating(tx.averageRating);
+            setTask(tx.completedJobs);
         } catch (error) {
             toast.error(`Transaction failed: ${error.reason}`);
             console.error(error);
@@ -125,7 +130,7 @@ const Rating = () => {
             <Col style={{ width: '48%' }}>
                 <h3 style={{ marginBottom: "2.5vh" }}>Stats</h3>
                 <Form>
-                <Form.Group style={{ marginBottom: "2vh" }}>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
                         <Form.ControlLabel>Address</Form.ControlLabel>
                         <Form.Control name="address" value={address} onChange={(value) => setAddress(value)} />
                     </Form.Group>
@@ -140,9 +145,18 @@ const Rating = () => {
                         appearance="primary"
                         onClick={stats}
                         disabled={loading}
+                        style={{ marginBottom: "2vh" }}
                     >
                         {loading ? "Checking..." : "Check Stats"}
                     </Button>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <Form.ControlLabel style={{ marginBottom: "1vh" }}>
+                            Number of Jobs Done: {pressed ? (tasks ? tasks : "No Job Completed") : ""}
+                        </Form.ControlLabel>
+                        <Form.ControlLabel>
+                            Average Rating: {pressed ? (statsrating ? statsrating : "No Rating") : ""}
+                        </Form.ControlLabel>
+                    </Form.Group>
                 </Form>
             </Col>
         </Panel>
