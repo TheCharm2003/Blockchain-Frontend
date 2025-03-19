@@ -5,6 +5,7 @@ import { getBlockchain } from "../Components/Blockchain";
 
 const Dispute = () => {
     const [disputeRaised, setDisputeRaised] = useState(false);
+    const [paid, setPaid] = useState(false);
     const [pressed, setPressed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [disputeloading, setDisputeLoading] = useState(false);
@@ -21,6 +22,7 @@ const Dispute = () => {
             const { contract } = await getBlockchain();
             const job = await contract.getJob(jobId);
             setDisputeRaised(job.disputeRaised);
+            setPaid(job.isPaid);
             setPressed(true);
         } catch (error) {
             toast.error("Error fetching job details");
@@ -95,7 +97,7 @@ const Dispute = () => {
                 </Form.Group>
                 <Form.Group style={{ marginBottom: "2vh" }}>
                     <Form.ControlLabel>
-                        Dispute Status: {pressed ? (disputeRaised ? "Dispute Raised" : "No Dispute") : ""}
+                        Dispute Status: {pressed ? (disputeRaised ? (paid ? "Dispute Resolved" : "Dispute Raised") : "No Dispute") : ""}
                     </Form.ControlLabel>
                 </Form.Group>
                 <Button

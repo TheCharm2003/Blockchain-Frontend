@@ -18,6 +18,7 @@ const JobListings = () => {
                     jobPromises.push(contract.getJob(i));
                 }
                 const jobData = await Promise.all(jobPromises);
+console.log(jobData);
                 const formattedJobs = jobData.map((job, index) => ({
                     id: index + 1,
                     client: job[0],
@@ -26,8 +27,9 @@ const JobListings = () => {
                     payment: ethers.formatEther(job[3]),
                     isCompleted: job[4],
                     isPaid: job[5],
-                    cilentRated: job[6],
-                    workedRated: job[7],
+                    disputeRaised: job[6],
+                    cilentRated: job[7],
+                    workedRated: job[8],
                 }));
                 setJobs(formattedJobs);
             } catch (error) {
@@ -57,15 +59,15 @@ const JobListings = () => {
             cellBordered
             hover
             >
-                <Column width={100} align="center">
+                <Column width={50} align="center">
                     <HeaderCell>ID</HeaderCell>
                     <Cell>{(rowData) => rowData.id}</Cell>
                 </Column>
-                <Column width={300}>
+                <Column width={380}>
                     <HeaderCell>Client</HeaderCell>
                     <Cell>{(rowData) => rowData.client}</Cell>
                 </Column>
-                <Column width={300}>
+                <Column width={380}>
                     <HeaderCell>Worker</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
@@ -77,13 +79,17 @@ const JobListings = () => {
                     <HeaderCell>Payment (ETH)</HeaderCell>
                     <Cell>{(rowData) => rowData.payment}</Cell>
                 </Column>
-                <Column width={100}>
+                <Column width={90}>
                     <HeaderCell>Completed</HeaderCell>
                     <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={100}>
+                <Column width={90}>
                     <HeaderCell>Paid</HeaderCell>
                     <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
+                </Column>
+                <Column width={90}>
+                    <HeaderCell>Disputed</HeaderCell>
+                    <Cell>{(rowData) => (rowData.disputeRaised ? 'Yes' : 'No')}</Cell>
                 </Column>
             </Table>
         </Panel>
