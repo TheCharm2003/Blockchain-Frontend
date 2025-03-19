@@ -7,11 +7,9 @@ const { Column, HeaderCell, Cell } = Table;
 
 const JobListings = () => {
     const [jobs, setJobs] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchJobs = async () => {
-            setLoading(true);
             try {
                 const { contract } = await getBlockchain();
                 const jobCount = Number(await contract.jobCounter());
@@ -35,8 +33,6 @@ const JobListings = () => {
             } catch (error) {
                 console.error("Error fetching jobs:", error);
                 toast.error("Failed to fetch jobs.");
-            } finally {
-                setLoading(false);
             }
         };
         fetchJobs();
@@ -77,7 +73,7 @@ const JobListings = () => {
                     <HeaderCell>Description</HeaderCell>
                     <Cell>{(rowData) => rowData.description}</Cell>
                 </Column>
-                <Column width={120} align="center">
+                <Column width={100} align="center">
                     <HeaderCell>Payment (ETH)</HeaderCell>
                     <Cell>{(rowData) => rowData.payment}</Cell>
                 </Column>
