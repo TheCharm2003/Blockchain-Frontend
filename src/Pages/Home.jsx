@@ -5,7 +5,7 @@ import { getBlockchain } from "../Components/Blockchain";
 import { toast } from "react-toastify";
 
 const Home = () => {
-  const [address, setAddress] = useState();
+  const [address, setAddress] = useState("");
 
   useEffect(() => {
     const fetchaddress = async () => {
@@ -18,6 +18,24 @@ const Home = () => {
       }
     }
     fetchaddress();
+    const handleAccountsChanged = (accounts) => {
+      if (accounts.length > 0) {
+        setAddress(accounts[0]);
+      } else {
+        setAddress("");
+      }
+    };
+
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+    }
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
   }, []);
 
   return (

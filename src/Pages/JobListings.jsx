@@ -18,7 +18,6 @@ const JobListings = () => {
                     jobPromises.push(contract.getJob(i));
                 }
                 const jobData = await Promise.all(jobPromises);
-console.log(jobData);
                 const formattedJobs = jobData.map((job, index) => ({
                     id: index + 1,
                     client: job[0],
