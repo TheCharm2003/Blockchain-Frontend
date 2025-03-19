@@ -45,7 +45,6 @@ const JobListings = () => {
     return (
         <Panel
             bordered
-            header="Job Listings"
             shaded
             style={{
                 margin: "auto",
@@ -54,16 +53,23 @@ const JobListings = () => {
                 height: 'auto'
             }}
         >
-            <Table data={jobs} autoHeight bordered>
+            <h3 style={{ marginBottom: "2.5vh" }}>Job Listings</h3>
+            <Table 
+            data={jobs} 
+            autoHeight 
+            bordered
+            cellBordered
+            hover
+            >
                 <Column width={100} align="center">
                     <HeaderCell>ID</HeaderCell>
                     <Cell>{(rowData) => rowData.id}</Cell>
                 </Column>
-                <Column width={200}>
+                <Column width={300}>
                     <HeaderCell>Client</HeaderCell>
                     <Cell>{(rowData) => rowData.client}</Cell>
                 </Column>
-                <Column width={200}>
+                <Column width={300}>
                     <HeaderCell>Worker</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
