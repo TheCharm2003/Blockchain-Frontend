@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import GigEconomyABI from "./GigEconomy.json";
 
-const CONTRACT_ADDRESS = "0xEDE9cA85f7375A3Cf9BC687B3E7cEaB4da0Dc1dA";
+const CONTRACT_ADDRESS = "0x68b9CE5Fc0f90E29C3d6c21bD76512Fe34F3234D";
 
 export const getBlockchain = async () => {
     if (!window.ethereum) {

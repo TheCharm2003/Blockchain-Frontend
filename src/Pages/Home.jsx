@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Panel } from "rsuite";
+import { Panel, toaster, Message } from "rsuite";
 import home from "../Assets/Home.png"
 import { getBlockchain } from "../Components/Blockchain";
 import { toast } from "react-toastify";
@@ -13,8 +13,13 @@ const Home = () => {
         const { signer } = await getBlockchain();
         setAddress(signer.address);
       } catch (error) {
-        console.error("Error fetching:", error);
-        toast.error("Failed to fetch.");
+        console.error(error);
+        toaster.push(
+          <Message showIcon type="error" closable >
+              Cannot Connect to Metamask
+          </Message>,
+          { placement: 'topCenter', duration: 8000 }
+      );
       }
     }
     fetchaddress();

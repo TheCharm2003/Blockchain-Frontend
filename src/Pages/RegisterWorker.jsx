@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Button, Form, Panel, Divider, Col } from "rsuite";
-import { toast } from "react-toastify";
-import { getBlockchain } from "../Components/Blockchain";
+import { Button, Form, Panel, Divider, Col, toaster, Message } from "rsuite";
+import { getBlockchain, simulateCall } from "../Components/Blockchain";
 import Register from "../Assets/Register.jpg"
 
 const RegisterWorker = () => {
@@ -13,17 +12,24 @@ const RegisterWorker = () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
+            await simulateCall(contract, "registerWorker", [name, skill]);
             const tx = await contract.registerWorker(name, skill);
             await tx.wait();
-            toast.success("Worker Registered Successfully!");
+            toaster.push(
+                <Message showIcon type="success" closable >
+                    Worker Registered Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setName("");
             setSkill("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable >
+                    Cannot Connect to Metamask
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
