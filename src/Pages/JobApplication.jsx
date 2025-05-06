@@ -7,24 +7,13 @@ const { Column, HeaderCell, Cell } = Table;
 
 
 const JobApplication = () => {
-    const RadioLabel = ({ children }) => <label style={{ padding: 7 }}>{children}</label>;
-    const [rating, setRating] = useState();
-    const [jobId, setJobId] = useState("");
-    const [role, setRole] = useState("worker");
-    const [srole, setSRole] = useState();
-    const [loading, setLoading] = useState(false);
-    const [ratingLoading, setRatingLoading] = useState(false);
-    const [address, setAddress] = useState();
-    const [statsrating, setStatRating] = useState();
-    const [tasks, setTask] = useState();
-    const [pressed, setPressed] = useState();
-
     const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
-        const fetchJobs = async () => {
+        const fetchData = async () => {
             try {
-                const { contract } = await getBlockchain();
+                const { signer, contract } = await getBlockchain();
+                const address = signer.address;
                 const jobCount = Number(await contract.jobCounter());
                 const jobPromises = [];
                 for (let i = 1; i < jobCount; i++) {
@@ -44,17 +33,34 @@ const JobApplication = () => {
                         disputeRaised: job[6],
                         clientRated: job[7],
                         workerRated: job[8],
-                        applicants: nestedData.map(addr => addr.toString())
+                        applicants: nestedData.map(addr => addr.toString()),
+                        workername: job[10] ? job[10] : "Not Assigned",
                     };
                 });
-                console.log(formattedJobs);
-                setJobs(formattedJobs);
+                if (formattedJobs.length > 0) {
+                    const finalJobs = formattedJobs.filter(job => job.client === address);
+                    setJobs(finalJobs);
+                }
             } catch (error) {
-                console.error("Error fetching jobs:", error);
-                toast.error("Failed to fetch jobs.");
+                console.error("Error fetching:", error);
+                toast.error("Failed to fetch.");
+            }
+        }
+        fetchData();
+
+        const handleAccountsChanged = (accounts) => {
+            fetchData();
+        };
+
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+        }
+
+        return () => {
+            if (window.ethereum) {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
             }
         };
-        fetchJobs();
     }, []);
 
     return (
@@ -74,16 +80,21 @@ const JobApplication = () => {
                 bordered
                 cellBordered
                 hover
+                wordWrap='keep-all'
             >
                 <Column width={50} align="center">
                     <HeaderCell>ID</HeaderCell>
                     <Cell>{(rowData) => rowData.id}</Cell>
                 </Column>
                 <Column width={380}>
-                    <HeaderCell>Worker</HeaderCell>
+                    <HeaderCell>Worker Name</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
-                <Column width={300} className="wrap-column">
+                <Column width={100}>
+                    <HeaderCell>Worker Name</HeaderCell>
+                    <Cell>{(rowData) => rowData.workername}</Cell>
+                </Column>
+                <Column width={250}>
                     <HeaderCell>Description</HeaderCell>
                     <Cell>{(rowData) => rowData.description}</Cell>
                 </Column>
@@ -91,25 +102,24 @@ const JobApplication = () => {
                     <HeaderCell>Payment (ETH)</HeaderCell>
                     <Cell>{(rowData) => rowData.payment}</Cell>
                 </Column>
-                <Column width={90}>
+                <Column width={80}>
                     <HeaderCell>Completed</HeaderCell>
                     <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={90}>
+                <Column width={70}>
                     <HeaderCell>Paid</HeaderCell>
                     <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={90}>
+                <Column width={70}>
                     <HeaderCell>Disputed</HeaderCell>
                     <Cell>{(rowData) => (rowData.disputeRaised ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={380} className="wrap-column">
+                <Column width={380}>
                     <HeaderCell>Applicants</HeaderCell>
                     <Cell>
                         {(rowData) => rowData.applicants?.join(', ') || 'N/A'}
                     </Cell>
                 </Column>
-
             </Table>
         </Panel>
     );

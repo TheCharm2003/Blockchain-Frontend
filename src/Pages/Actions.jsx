@@ -61,7 +61,7 @@ const Actions = () => {
             }}
         >
             <Col style={{ width: '48%' }}>
-                <h3 style={{ marginBottom: "2.5vh" }}>Job</h3>
+                <h3 style={{ marginBottom: "2.5vh" }}>Job Application</h3>
                 <Form>
                     <Form.Group>
                         <Form.ControlLabel>ID</Form.ControlLabel>

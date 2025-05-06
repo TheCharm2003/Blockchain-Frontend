@@ -57,20 +57,21 @@ const JobListings = () => {
             bordered
             cellBordered
             hover
+            rowHeight="auto"
             >
                 <Column width={50} align="center">
                     <HeaderCell>ID</HeaderCell>
                     <Cell>{(rowData) => rowData.id}</Cell>
                 </Column>
-                <Column width={380}>
+                <Column width={400}>
                     <HeaderCell>Client</HeaderCell>
                     <Cell>{(rowData) => rowData.client}</Cell>
                 </Column>
-                <Column width={380}>
+                <Column width={400}>
                     <HeaderCell>Worker</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
-                <Column width={300}>
+                <Column width={260} className="wrap-column">
                     <HeaderCell>Description</HeaderCell>
                     <Cell>{(rowData) => rowData.description}</Cell>
                 </Column>

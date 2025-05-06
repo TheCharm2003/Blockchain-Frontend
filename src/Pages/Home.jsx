@@ -30,7 +30,6 @@ const Home = () => {
       window.ethereum.on('accountsChanged', handleAccountsChanged);
     }
 
-    // Cleanup the event listener on component unmount
     return () => {
       if (window.ethereum) {
         window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
