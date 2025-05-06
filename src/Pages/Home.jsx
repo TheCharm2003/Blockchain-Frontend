@@ -39,15 +39,18 @@ const Home = () => {
   }, []);
 
   return (
-    <Panel bordered style={{ marginTop: "2vh" }}>
-      <h3 style={{  textAlign: "right", paddingRight: "0.5%", fontWeight: "normal" }}>
+    <Panel bordered style={{ marginTop: "2vh", height: '85vh' }}>
+      <h3 style={{ textAlign: "right", paddingRight: "0.5%", fontWeight: "normal" }}>
         Wallet: {address ? address : ""}
       </h3>
-      <img
-        src={home}
-        alt="Future of Freelance"
-        style={{ width: "100%", height: "100%" }}
-      />
+      <div style={{maxHeight: '80vh', overflowY: 'auto'}}>
+        <img
+          src={home}
+          alt="Future of Freelance"
+          style={{ width: "100%" }}
+        />
+      </div>
+
     </Panel>
   );
 };
