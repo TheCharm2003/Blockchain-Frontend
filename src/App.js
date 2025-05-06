@@ -9,6 +9,7 @@ import Actions from "./Pages/Actions";
 import JobListings from "./Pages/JobListings";
 import Dispute from "./Pages/Dispute";
 import Rating from "./Pages/Rating";
+import JobApplication from "./Pages/JobApplication";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/Listings" element={<JobListings/>}/>
         <Route path="/Dispute" element={<Dispute/>}/>
         <Route path="/Rate" element={<Rating/>}/>
+        <Route path="/Assign" element={<JobApplication/>}/>
       </Routes>
     </Router>
   );

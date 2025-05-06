@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Button, Form, Panel, Rate, Radio, RadioGroup, Col, Divider } from "rsuite";
 import { toast } from "react-toastify";
 import { getBlockchain } from "../Components/Blockchain";
-import RatingImg from '../Assets/rating.jpg'
 
-const Rating = () => {
+const JobApplication = () => {
     const RadioLabel = ({ children }) => <label style={{ padding: 7 }}>{children}</label>;
     const [rating, setRating] = useState();
     const [jobId, setJobId] = useState("");
@@ -93,50 +92,47 @@ const Rating = () => {
             }}
         >
             <Col style={{ width: '48%' }}>
-                <h3 style={{ marginBottom: "2.5vh" }}>Rate Job</h3>
-                <Form>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <Form.ControlLabel>Job ID</Form.ControlLabel>
-                        <Form.Control name="jobId" value={jobId} onChange={(value) => setJobId(value)} />
-                    </Form.Group>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <Form.ControlLabel>Rating</Form.ControlLabel>
-                        <Form.Control
-                            name="rating"
-                            value={rating}
-                            onChange={(value) => setRating(value)}
-                            accepter={Rate}
-                        />
-                    </Form.Group>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={role} onChange={setRole}>
-                            <RadioLabel>Role: </RadioLabel>
-                            <Radio value="worker">Worker</Radio>
-                            <Radio value="client">Client</Radio>
-                        </RadioGroup>
-                    </Form.Group>
-                    <Button
-                        appearance="primary"
-                        onClick={role === "client" ? handleRateClient : handleRateWorker}
-                        disabled={ratingLoading}
-                    >
-                        {ratingLoading ? "Rating..." : `Rate ${role === "client" ? "Client" : "Worker"}`}
-                    </Button>
-                </Form>
+
             </Col>
+
             <Col style={{ width: '2%' }}>
                 <Divider vertical
                     style={{ backgroundColor: "black", minHeight: "43vh", width: "0.84px" }} />
             </Col>
-            <Col style={{ width: '48%' , justifyContent: 'center', margin: 'auto', display: 'flex'}}>
-                <img
-                    src={RatingImg}
-                    alt="Rating"
-                    style={{ width: "60%", alignItems: 'center'}}
-                />
+            <Col style={{ width: '48%' }}>
+                <h3 style={{ marginBottom: "2.5vh" }}>Stats</h3>
+                <Form>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <Form.ControlLabel>Address</Form.ControlLabel>
+                        <Form.Control name="address" value={address} onChange={(value) => setAddress(value)} />
+                    </Form.Group>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={srole} onChange={setSRole}>
+                            <RadioLabel>Role: </RadioLabel>
+                            <Radio value="worker">Worker</Radio>
+                            {/* <Radio value="client">Client</Radio> */}
+                        </RadioGroup>
+                    </Form.Group>
+                    <Button
+                        appearance="primary"
+                        onClick={stats}
+                        disabled={loading}
+                        style={{ marginBottom: "2vh" }}
+                    >
+                        {loading ? "Checking..." : "Check Stats"}
+                    </Button>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <Form.ControlLabel style={{ marginBottom: "1vh" }}>
+                            Number of Jobs Done: {pressed ? (tasks ? tasks : "No Job Completed") : ""}
+                        </Form.ControlLabel>
+                        <Form.ControlLabel>
+                            Average Rating: {pressed ? (statsrating ? statsrating : "No Rating") : ""}
+                        </Form.ControlLabel>
+                    </Form.Group>
+                </Form>
             </Col>
         </Panel>
     );
 };
 
-export default Rating;
+export default JobApplication;
