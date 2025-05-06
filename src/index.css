@@ -1,0 +1,4 @@
+.rs-table-cell.wrap-column .rs-table-cell-content {
+    white-space: normal;
+    word-break: break-all;
+}
