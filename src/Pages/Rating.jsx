@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form, Panel, Rate, Radio, RadioGroup, Col, Divider, toaster, Message } from "rsuite";
 import { toast } from "react-toastify";
-import { getBlockchain, simulateTransactionCall } from "../Components/Blockchain";
+import { getBlockchain, simulateCall } from "../Components/Blockchain";
 
 const Rating = () => {
     const RadioLabel = ({ children }) => <label style={{ padding: 7 }}>{children}</label>;
@@ -29,7 +29,7 @@ const Rating = () => {
         setRatingLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateTransactionCall(contract, "rateClient", [rating, jobId]);
+            await simulateCall(contract, "rateClient", [rating, jobId]);
             const tx = await contract.rateClient(
                 rating,
                 jobId
@@ -46,8 +46,8 @@ const Rating = () => {
             setRole("worker");
         } catch (error) {
             toaster.push(
-                <Message showIcon type="error" closable >
-                    {error.reason}
+                <Message showIcon type="error" closable>
+                    {error.message}
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
@@ -60,7 +60,7 @@ const Rating = () => {
     const handleRateWorker = async () => {
         if (!jobId || !rating) {
             toaster.push(
-                <Message showIcon type="error" closable >
+                <Message showIcon type="error" closable>
                     Please fill in all fields.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
@@ -70,7 +70,7 @@ const Rating = () => {
         setRatingLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateTransactionCall(contract, "rateWorker", [rating, jobId]);
+            await simulateCall(contract, "rateWorker", [rating, jobId]);
             const tx = await contract.rateWorker(
                 rating,
                 jobId
@@ -87,8 +87,8 @@ const Rating = () => {
             setRole("worker");
         } catch (error) {
             toaster.push(
-                <Message showIcon type="error" closable >
-                    {error.reason}
+                <Message showIcon type="error" closable>
+                    {error.message}
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );

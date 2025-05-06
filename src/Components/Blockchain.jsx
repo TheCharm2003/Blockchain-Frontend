@@ -22,10 +22,9 @@ export const getBlockchain = async () => {
     }
 };
 
-export const simulateTransactionCall = async (contract, methodName, args) => {
+export const simulateCall = async (contract, methodName, args) => {
     const callData = contract.interface.encodeFunctionData(methodName, args);
     const provider = new ethers.BrowserProvider(window.ethereum);
-
     try {
         const revertCheck = await provider.call({ to: contract, data: callData });
     } catch (error) {
