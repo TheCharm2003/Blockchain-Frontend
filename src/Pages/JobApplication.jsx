@@ -8,6 +8,30 @@ const { Column, HeaderCell, Cell } = Table;
 
 const JobApplication = () => {
     const [jobs, setJobs] = useState([]);
+    const [jobId, setJobId] = useState("");
+    const [address, setAddress] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const assignJob = async () => {
+        setLoading(true);
+        try {
+            const { contract } = await getBlockchain();
+            const tx = await contract.selectWorker(jobId, address);
+            await tx.wait();
+            toast.success("Job AssignedSuccessfully!");
+            setJobId("");
+            setAddress("");
+        } catch (error) {
+            if (error.reason) {
+                toast.error(`Transaction failed: ${error.reason}`);
+            } else {
+                toast.error("An unexpected error occurred.");
+            }
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,9 +95,40 @@ const JobApplication = () => {
                 margin: "auto",
                 marginTop: "2vh",
                 width: "100%",
-                height: "48vh",
+                height: 'auto'
             }}
         >
+            <h3 style={{ marginBottom: "2.5vh" }}>Assign Job</h3>
+            <Form layout="inline">
+                <Form.Group>
+                    <Form.ControlLabel>Job ID</Form.ControlLabel>
+                    <Form.Control
+                        name="jobId"
+                        type="number"
+                        value={jobId}
+                        onChange={(value) => setJobId(value)}
+                    />
+                </Form.Group>
+
+                <Form.Group>
+                    <Form.ControlLabel>Worker Address</Form.ControlLabel>
+                    <Form.Control
+                        name="address"
+                        value={address}
+                        onChange={(value) => setAddress(value)}
+                    />
+                </Form.Group>
+
+                <Button
+                    appearance="primary"
+                    onClick={assignJob}
+                    disabled={loading}
+                >
+                    {loading ? "Assigning..." : "Assign Job"}
+                </Button>
+            </Form>
+
+            <h3 style={{ marginBottom: "2.5vh" }}>Job Posted</h3>
             <Table
                 data={jobs}
                 autoHeight

@@ -86,7 +86,7 @@ const Dispute = () => {
                 margin: "auto",
                 marginTop: "2vh",
                 width: "100%",
-                height: "50vh",
+                height: 'auto'
             }}
         >
             <h3 style={{ marginBottom: "2.5vh" }}>Dispute Management</h3>

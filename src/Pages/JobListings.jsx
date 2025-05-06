@@ -57,7 +57,7 @@ const JobListings = () => {
             bordered
             cellBordered
             hover
-            rowHeight="auto"
+            wordWrap='keep-all'
             >
                 <Column width={50} align="center">
                     <HeaderCell>ID</HeaderCell>
@@ -71,7 +71,7 @@ const JobListings = () => {
                     <HeaderCell>Worker</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
-                <Column width={260} className="wrap-column">
+                <Column width={260}>
                     <HeaderCell>Description</HeaderCell>
                     <Cell>{(rowData) => rowData.description}</Cell>
                 </Column>

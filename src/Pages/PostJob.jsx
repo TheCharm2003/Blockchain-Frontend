@@ -62,7 +62,8 @@ const PostJob = () => {
                 margin: "auto",
                 marginTop: "2vh",
                 width: '100%',
-                height: '45vh'
+                height: 'auto',
+                padding: "1%"
             }}
         >
             <Col style={{ width: '48%' }}>
