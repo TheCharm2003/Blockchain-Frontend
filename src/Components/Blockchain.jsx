@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import GigEconomyABI from "./GigEconomy.json";
 
-const CONTRACT_ADDRESS = "0xF4e78c66db6C1E72cDf0B3c68254C08dB2198d6a";
+const CONTRACT_ADDRESS = "0xFC6d62c5075b208472857e0AbD2c7dfd7310f43E";
 
 export const getBlockchain = async () => {
     if (!window.ethereum) {
@@ -16,7 +16,6 @@ export const getBlockchain = async () => {
             signer
         );
         const network = await provider.getNetwork();
-        console.log("Connected to network:", network.name, network.chainId);
         return { contract, signer };
     } catch (error) {
         console.error("Error connecting to blockchain:", error);

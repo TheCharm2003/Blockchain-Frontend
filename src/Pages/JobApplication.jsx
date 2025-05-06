@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Button, Form, Panel, Rate, Radio, RadioGroup, Col, Divider } from "rsuite";
+import React, { useState, useEffect } from "react";
+import { Button, Form, Panel, Radio, RadioGroup, Col, Divider } from "rsuite";
+import { ethers } from "ethers";
 import { toast } from "react-toastify";
 import { getBlockchain } from "../Components/Blockchain";
 
@@ -16,49 +17,39 @@ const JobApplication = () => {
     const [tasks, setTask] = useState();
     const [pressed, setPressed] = useState();
 
-    const handleRateClient = async () => {
-        if (!jobId || !rating) {
-            toast.error("Please fill in all fields.");
-            return;
-        }
-        setRatingLoading(true);
-        try {
-            const { contract } = await getBlockchain();
-            const tx = await contract.rateClient(
-                rating,
-                jobId
-            );
-            await tx.wait();
-            toast.success("Client rated successfully!");
-        } catch (error) {
-            toast.error(`Error: ${error.reason}`);
-            console.error(error);
-        } finally {
-            setRatingLoading(false);
-        }
-    };
+    const [jobs, setJobs] = useState([]);
 
-    const handleRateWorker = async () => {
-        if (!jobId || !rating) {
-            toast.error("Please fill in all fields.");
-            return;
-        }
-        setRatingLoading(true);
-        try {
-            const { contract } = await getBlockchain();
-            const tx = await contract.rateWorker(
-                rating,
-                jobId
-            );
-            await tx.wait();
-            toast.success("Worker rated successfully!");
-        } catch (error) {
-            toast.error(`Error: ${error.reason}`);
-            console.error(error);
-        } finally {
-            setRatingLoading(false);
-        }
-    };
+    useEffect(() => {
+        const fetchJobs = async () => {
+            try {
+                const { contract } = await getBlockchain();
+                const jobCount = Number(await contract.jobCounter());
+                const jobPromises = [];
+                for (let i = 1; i < jobCount; i++) {
+                    jobPromises.push(contract.getJob(i));
+                }
+                const jobData = await Promise.all(jobPromises);
+                console.log(jobData);
+                const formattedJobs = jobData.map((job, index) => ({
+                    id: index + 1,
+                    client: job[0],
+                    worker: job[1],
+                    description: job[2],
+                    payment: ethers.formatEther(job[3]),
+                    isCompleted: job[4],
+                    isPaid: job[5],
+                    disputeRaised: job[6],
+                    cilentRated: job[7],
+                    workedRated: job[8],
+                }));
+                setJobs(formattedJobs);
+            } catch (error) {
+                console.error("Error fetching jobs:", error);
+                toast.error("Failed to fetch jobs.");
+            }
+        };
+        fetchJobs();
+    }, []);
 
     const stats = async () => {
         if (!srole) {
@@ -91,46 +82,7 @@ const JobApplication = () => {
                 height: "48vh",
             }}
         >
-            <Col style={{ width: '48%' }}>
-
-            </Col>
-
-            <Col style={{ width: '2%' }}>
-                <Divider vertical
-                    style={{ backgroundColor: "black", minHeight: "43vh", width: "0.84px" }} />
-            </Col>
-            <Col style={{ width: '48%' }}>
-                <h3 style={{ marginBottom: "2.5vh" }}>Stats</h3>
-                <Form>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <Form.ControlLabel>Address</Form.ControlLabel>
-                        <Form.Control name="address" value={address} onChange={(value) => setAddress(value)} />
-                    </Form.Group>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={srole} onChange={setSRole}>
-                            <RadioLabel>Role: </RadioLabel>
-                            <Radio value="worker">Worker</Radio>
-                            {/* <Radio value="client">Client</Radio> */}
-                        </RadioGroup>
-                    </Form.Group>
-                    <Button
-                        appearance="primary"
-                        onClick={stats}
-                        disabled={loading}
-                        style={{ marginBottom: "2vh" }}
-                    >
-                        {loading ? "Checking..." : "Check Stats"}
-                    </Button>
-                    <Form.Group style={{ marginBottom: "2vh" }}>
-                        <Form.ControlLabel style={{ marginBottom: "1vh" }}>
-                            Number of Jobs Done: {pressed ? (tasks ? tasks : "No Job Completed") : ""}
-                        </Form.ControlLabel>
-                        <Form.ControlLabel>
-                            Average Rating: {pressed ? (statsrating ? statsrating : "No Rating") : ""}
-                        </Form.ControlLabel>
-                    </Form.Group>
-                </Form>
-            </Col>
+            
         </Panel>
     );
 };

@@ -128,12 +128,44 @@ const Rating = () => {
                 <Divider vertical
                     style={{ backgroundColor: "black", minHeight: "43vh", width: "0.84px" }} />
             </Col>
-            <Col style={{ width: '48%' , justifyContent: 'center', margin: 'auto', display: 'flex'}}>
+            <Col style={{ width: '48%', justifyContent: 'center', margin: 'auto', display: 'flex' }}>
                 <img
                     src={RatingImg}
                     alt="Rating"
-                    style={{ width: "60%", alignItems: 'center'}}
+                    style={{ width: "60%", alignItems: 'center' }}
                 />
+            </Col>
+            <Col style={{ width: '48%' }}>
+                <h3 style={{ marginBottom: "2.5vh" }}>Stats</h3>
+                <Form>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <Form.ControlLabel>Address</Form.ControlLabel>
+                        <Form.Control name="address" value={address} onChange={(value) => setAddress(value)} />
+                    </Form.Group>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={srole} onChange={setSRole}>
+                            <RadioLabel>Role: </RadioLabel>
+                            <Radio value="worker">Worker</Radio>
+                            {/* <Radio value="client">Client</Radio> */}
+                        </RadioGroup>
+                    </Form.Group>
+                    <Button
+                        appearance="primary"
+                        onClick={stats}
+                        disabled={loading}
+                        style={{ marginBottom: "2vh" }}
+                    >
+                        {loading ? "Checking..." : "Check Stats"}
+                    </Button>
+                    <Form.Group style={{ marginBottom: "2vh" }}>
+                        <Form.ControlLabel style={{ marginBottom: "1vh" }}>
+                            Number of Jobs Done: {pressed ? (tasks ? tasks : "No Job Completed") : ""}
+                        </Form.ControlLabel>
+                        <Form.ControlLabel>
+                            Average Rating: {pressed ? (statsrating ? statsrating : "No Rating") : ""}
+                        </Form.ControlLabel>
+                    </Form.Group>
+                </Form>
             </Col>
         </Panel>
     );

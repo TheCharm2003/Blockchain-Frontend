@@ -9,13 +9,13 @@ const Actions = () => {
     const [comloading, setComLoading] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const acceptJob = async () => {
+    const applyJob = async () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
-            const tx = await contract.acceptJob(accjobId);
+            const tx = await contract.applyForJob(accjobId);
             await tx.wait();
-            toast.success("Job Accepted!");
+            toast.success("Job Applied!");
             setAccJobId("");
         } catch (error) {
             if (error.reason) {
@@ -61,7 +61,7 @@ const Actions = () => {
             }}
         >
             <Col style={{ width: '48%' }}>
-                <h3 style={{ marginBottom: "2.5vh" }}>Accept Job</h3>
+                <h3 style={{ marginBottom: "2.5vh" }}>Job</h3>
                 <Form>
                     <Form.Group>
                         <Form.ControlLabel>ID</Form.ControlLabel>
@@ -74,10 +74,10 @@ const Actions = () => {
                     </Form.Group>
                     <Button
                         appearance="primary"
-                        onClick={acceptJob}
+                        onClick={applyJob}
                         disabled={loading}
                     >
-                        {loading ? "Accepting..." : "Accept Job"}
+                        {loading ? "Applying..." : "Apply for Job"}
                     </Button>
                 </Form>
             </Col>
