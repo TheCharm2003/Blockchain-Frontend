@@ -15,10 +15,30 @@ export const getBlockchain = async () => {
             GigEconomyABI.abi,
             signer
         );
-        const network = await provider.getNetwork();
         return { contract, signer };
     } catch (error) {
         console.error("Error connecting to blockchain:", error);
         throw error;
+    }
+};
+
+export const simulateTransactionCall = async (contract, methodName, args) => {
+    const callData = contract.interface.encodeFunctionData(methodName, args);
+    const provider = new ethers.BrowserProvider(window.ethereum);
+
+    try {
+        const revertCheck = await provider.call({ to: contract, data: callData });
+    } catch (error) {
+        if (error.data) {
+            const data = "0x" + error.data.slice(10);
+            const decodedReason = ethers.AbiCoder.defaultAbiCoder().decode(
+              ["string"],
+              ethers.getBytes(data)
+            );
+
+            throw new Error(decodedReason[0]);
+        } else {
+            throw new Error("Unknown Error");
+        }
     }
 };
