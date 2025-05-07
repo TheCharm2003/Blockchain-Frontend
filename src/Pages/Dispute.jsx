@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Form, Panel, toaster, Message } from "rsuite";
-import { toast } from "react-toastify";
 import { getBlockchain } from "../Components/Blockchain";
 
 const Dispute = () => {
