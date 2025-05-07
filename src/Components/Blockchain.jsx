@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import GigEconomyABI from "./GigEconomy.json";
 
-const CONTRACT_ADDRESS = "0x68b9CE5Fc0f90E29C3d6c21bD76512Fe34F3234D";
+const CONTRACT_ADDRESS = "0xebF2D96c5CA3aE200322f8C208cAC3cEb251A873";
 
 export const getBlockchain = async () => {
     if (!window.ethereum) {
@@ -34,7 +34,6 @@ export const simulateCall = async (contract, methodName, args) => {
               ["string"],
               ethers.getBytes(data)
             );
-
             throw new Error(decodedReason[0]);
         } else {
             throw new Error("Unknown Error");

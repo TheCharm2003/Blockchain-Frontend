@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Panel, Divider, Col, toaster, Message } from "rsuite";
-import { getBlockchain, simulateCall } from "../Components/Blockchain";
+import { getBlockchain } from "../Components/Blockchain";
 import Register from "../Assets/Register.jpg"
 
 const RegisterWorker = () => {
@@ -12,7 +12,15 @@ const RegisterWorker = () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateCall(contract, "registerWorker", [name, skill]);
+            if (!name || !skill) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Fill Both Fields
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
             const tx = await contract.registerWorker(name, skill);
             await tx.wait();
             toaster.push(
@@ -25,8 +33,8 @@ const RegisterWorker = () => {
             setSkill("");
         } catch (error) {
             toaster.push(
-                <Message showIcon type="error" closable >
-                    Cannot Connect to Metamask
+                <Message showIcon type="error" closable>
+                    Worker Already Registered
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );

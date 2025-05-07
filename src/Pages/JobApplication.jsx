@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Panel, Table } from "rsuite";
+import { Button, Form, Panel, Table, toaster, Message } from "rsuite";
 import { ethers } from "ethers";
 import { toast } from "react-toastify";
-import { getBlockchain } from "../Components/Blockchain";
+import { getBlockchain, simulateCall } from "../Components/Blockchain";
 const { Column, HeaderCell, Cell } = Table;
 
 
@@ -16,60 +16,68 @@ const JobApplication = () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
+            await simulateCall(contract, "selectWorker", [jobId, address]);
             const tx = await contract.selectWorker(jobId, address);
             await tx.wait();
-            toast.success("Job AssignedSuccessfully!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Job Assigned Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setJobId("");
             setAddress("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Payment Released Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const { signer, contract } = await getBlockchain();
-                const address = signer.address;
-                const jobCount = Number(await contract.jobCounter());
-                const jobPromises = [];
-                for (let i = 1; i < jobCount; i++) {
-                    jobPromises.push(contract.getJob(i));
-                }
-                const jobData = await Promise.all(jobPromises);
-                const formattedJobs = jobData.map((job, index) => {
-                    const nestedData = Array.isArray(job[9]) ? job[9] : [];
-                    return {
-                        id: index + 1,
-                        client: job[0],
-                        worker: job[1],
-                        description: job[2],
-                        payment: ethers.formatEther(job[3]),
-                        isCompleted: job[4],
-                        isPaid: job[5],
-                        disputeRaised: job[6],
-                        clientRated: job[7],
-                        workerRated: job[8],
-                        applicants: nestedData.map(addr => addr.toString()),
-                        workername: job[10] ? job[10] : "Not Assigned",
-                    };
-                });
-                if (formattedJobs.length > 0) {
-                    const finalJobs = formattedJobs.filter(job => job.client === address);
-                    setJobs(finalJobs);
-                }
-            } catch (error) {
-                console.error("Error fetching:", error);
-                toast.error("Failed to fetch.");
+    const fetchData = async () => {
+        try {
+            const { signer, contract } = await getBlockchain();
+            const address = signer.address;
+            const jobCount = Number(await contract.jobCounter());
+            const jobPromises = [];
+            for (let i = 1; i < jobCount; i++) {
+                jobPromises.push(contract.getJob(i));
             }
+            const jobData = await Promise.all(jobPromises);
+            const formattedJobs = jobData.map((job, index) => {
+                const nestedData = Array.isArray(job[9]) ? job[9] : [];
+                return {
+                    id: index + 1,
+                    client: job[0],
+                    worker: job[1],
+                    description: job[2],
+                    payment: ethers.formatEther(job[3]),
+                    isCompleted: job[4],
+                    isPaid: job[5],
+                    disputeRaised: job[6],
+                    clientRated: job[7],
+                    workerRated: job[8],
+                    applicants: nestedData.map(addr => addr.toString()),
+                    workername: job[10] ? job[10] : "Not Assigned",
+                };
+            });
+            if (formattedJobs.length > 0) {
+                const finalJobs = formattedJobs.filter(job => job.client === address);
+                setJobs(finalJobs);
+            }
+        } catch (error) {
+            console.error("Error fetching:", error);
+            toast.error("Failed to fetch.");
         }
+    }
+
+    useEffect(() => {
         fetchData();
 
         const handleAccountsChanged = (accounts) => {

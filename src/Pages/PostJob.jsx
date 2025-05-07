@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Button, Form, Panel, Col, Divider } from "rsuite";
+import { Button, Form, Panel, Col, Divider, toaster, Message } from "rsuite";
 import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { getBlockchain } from "../Components/Blockchain";
+import { getBlockchain, simulateCall } from "../Components/Blockchain";
 
 const PostJob = () => {
     const [description, setDescription] = useState("");
@@ -14,20 +14,45 @@ const PostJob = () => {
     const postJob = async () => {
         setLoading(true);
         try {
+            if (!description || !payment) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Fill Both Fields
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
+            const paymentValue = parseFloat(payment);
+            if (isNaN(paymentValue) || paymentValue <= 0) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Payment Must Be Positive Number.
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
             const { contract } = await getBlockchain();
             const tx = await contract.postJob(description, ethers.parseEther(payment), {
                 value: ethers.parseEther(payment),
             });
             await tx.wait();
-            toast.success("Job Posted Successfully!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Job Posted Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setDescription("");
             setPayment("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Transaction Failed
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
@@ -38,16 +63,23 @@ const PostJob = () => {
         setPayLoading(true);
         try {
             const { contract } = await getBlockchain();
+            await simulateCall(contract, "releasePayment", [jobId]);
             const tx = await contract.releasePayment(jobId);
             await tx.wait();
-            toast.success("Payment Released Successfully!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Payment Released Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setJobId("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    {error.message}
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setPayLoading(false);
@@ -67,7 +99,7 @@ const PostJob = () => {
             }}
         >
             <Col style={{ width: '48%' }}>
-            <h3 style={{ marginBottom: "2.5vh" }}>Job Details</h3>
+                <h3 style={{ marginBottom: "2.5vh" }}>Job Details</h3>
                 <Form>
                     <Form.Group>
                         <Form.ControlLabel>Description</Form.ControlLabel>
@@ -100,7 +132,7 @@ const PostJob = () => {
                     style={{ backgroundColor: "black", minHeight: "40vh", width: "0.84px" }} />
             </Col>
             <Col style={{ width: '48%' }}>
-            <h3 style={{ marginBottom: "2.5vh" }}>Release Payment</h3>
+                <h3 style={{ marginBottom: "2.5vh" }}>Release Payment</h3>
                 <Form>
                     <Form.Group>
                         <Form.ControlLabel>ID</Form.ControlLabel>

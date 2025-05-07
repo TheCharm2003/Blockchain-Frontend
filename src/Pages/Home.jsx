@@ -54,7 +54,6 @@ const Home = () => {
           style={{ width: "100%" }}
         />
       </div>
-
     </Panel>
   );
 };

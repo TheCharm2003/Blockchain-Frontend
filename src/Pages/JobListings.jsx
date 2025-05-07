@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Panel, Table } from "rsuite";
-import { toast } from "react-toastify";
+import { Panel, Table, toaster, Message } from "rsuite";
 import { getBlockchain } from "../Components/Blockchain";
 import { ethers } from "ethers";
 const { Column, HeaderCell, Cell } = Table;
@@ -32,8 +31,13 @@ const JobListings = () => {
                 }));
                 setJobs(formattedJobs);
             } catch (error) {
-                console.error("Error fetching jobs:", error);
-                toast.error("Failed to fetch jobs.");
+                console.error(error);
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Unknown Error
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
             }
         };
         fetchJobs();

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Form, Col, Panel, Divider } from "rsuite";
+import { Button, Form, Col, Panel, Divider, toaster, Message } from "rsuite";
 import { toast } from "react-toastify";
-import { getBlockchain } from "../Components/Blockchain";
+import { getBlockchain, simulateCall } from "../Components/Blockchain";
 
 const Actions = () => {
     const [accjobId, setAccJobId] = useState("");
@@ -13,16 +13,32 @@ const Actions = () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
+            if (!accjobId) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Fill the Job ID.
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
+            await simulateCall(contract, "applyForJob", [accjobId]);
             const tx = await contract.applyForJob(accjobId);
             await tx.wait();
-            toast.success("Job Applied!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Job Applied!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setAccJobId("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    {error.message}
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
@@ -33,16 +49,32 @@ const Actions = () => {
         setComLoading(true);
         try {
             const { contract } = await getBlockchain();
+            if (!comjobId) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Fill the Job ID.
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
+            await simulateCall(contract, "completeJob", [comjobId]);
             const tx = await contract.completeJob(comjobId);
             await tx.wait();
-            toast.success("Job Marked as Completed!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Job Marked as Completed!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             setComJobId("");
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Transaction failed: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    {error.message}
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setComLoading(false);
