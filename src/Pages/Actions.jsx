@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Col, Panel, Divider, toaster, Message } from "rsuite";
-import { getBlockchain, simulateCall } from "../Components/Blockchain";
+import { getBlockchain } from "../Components/Blockchain";
 
 const Actions = () => {
     const [accjobId, setAccJobId] = useState("");

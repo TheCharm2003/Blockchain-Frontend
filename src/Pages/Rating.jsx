@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Panel, Rate, Radio, RadioGroup, Col, Divider, toaster, Message } from "rsuite";
-import { toast } from "react-toastify";
-import { getBlockchain, simulateCall } from "../Components/Blockchain";
+import { getBlockchain } from "../Components/Blockchain";
 
 const Rating = () => {
     const RadioLabel = ({ children }) => <label style={{ padding: 7 }}>{children}</label>;

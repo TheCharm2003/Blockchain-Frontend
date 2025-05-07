@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Panel, toaster, Message } from "rsuite";
 import home from "../Assets/Home.png"
 import { getBlockchain } from "../Components/Blockchain";
-import { toast } from "react-toastify";
 
 const Home = () => {
   const [address, setAddress] = useState("");

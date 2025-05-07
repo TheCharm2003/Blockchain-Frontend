@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form, Panel, Col, Divider, toaster, Message } from "rsuite";
-import { toast } from "react-toastify";
 import { ethers } from "ethers";
-import { getBlockchain, simulateCall } from "../Components/Blockchain";
+import { getBlockchain } from "../Components/Blockchain";
 
 const PostJob = () => {
     const [description, setDescription] = useState("");

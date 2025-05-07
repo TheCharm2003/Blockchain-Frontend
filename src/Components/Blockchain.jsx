@@ -26,13 +26,13 @@ export const simulateCall = async (contract, methodName, args) => {
     const callData = contract.interface.encodeFunctionData(methodName, args);
     const provider = new ethers.BrowserProvider(window.ethereum);
     try {
-        const revertCheck = await provider.call({ to: contract, data: callData });
+        await provider.call({ to: contract, data: callData });
     } catch (error) {
         if (error.data) {
             const data = "0x" + error.data.slice(10);
             const decodedReason = ethers.AbiCoder.defaultAbiCoder().decode(
-              ["string"],
-              ethers.getBytes(data)
+                ["string"],
+                ethers.getBytes(data)
             );
             throw new Error(decodedReason[0]);
         } else {

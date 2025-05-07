@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Panel, Table, toaster, Message } from "rsuite";
 import { ethers } from "ethers";
-import { toast } from "react-toastify";
-import { getBlockchain, simulateCall } from "../Components/Blockchain";
+import { getBlockchain } from "../Components/Blockchain";
 const { Column, HeaderCell, Cell } = Table;
 
 
