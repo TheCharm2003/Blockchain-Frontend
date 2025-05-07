@@ -5,16 +5,16 @@ import { getBlockchain, simulateCall } from "../Components/Blockchain";
 
 const Rating = () => {
     const RadioLabel = ({ children }) => <label style={{ padding: 7 }}>{children}</label>;
-    const [rating, setRating] = useState('');
+    const [rating, setRating] = useState(0);
     const [jobId, setJobId] = useState("");
     const [role, setRole] = useState("worker");
     const [srole, setSRole] = useState("worker");
     const [loading, setLoading] = useState(false);
     const [ratingLoading, setRatingLoading] = useState(false);
     const [address, setAddress] = useState('');
-    const [statsrating, setStatRating] = useState('');
-    const [tasks, setTask] = useState('');
-    const [pressed, setPressed] = useState('');
+    const [statsrating, setStatRating] = useState(0);
+    const [tasks, setTask] = useState(0);
+    const [pressed, setPressed] = useState(false);
 
     const handleRateClient = async () => {
         if (!jobId || !rating) {
@@ -29,7 +29,6 @@ const Rating = () => {
         setRatingLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateCall(contract, "rateClient", [rating, jobId]);
             const tx = await contract.rateClient(
                 rating,
                 jobId
@@ -37,17 +36,17 @@ const Rating = () => {
             await tx.wait();
             toaster.push(
                 <Message showIcon type="success" closable >
-                    Client rated successfully!
+                    Client Rated Successfully!
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            setRating("");
+            setRating(0);
             setJobId("");
             setRole("worker");
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    {error.message}
+                    Cannot Rate.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
@@ -70,7 +69,6 @@ const Rating = () => {
         setRatingLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateCall(contract, "rateWorker", [rating, jobId]);
             const tx = await contract.rateWorker(
                 rating,
                 jobId
@@ -78,17 +76,17 @@ const Rating = () => {
             await tx.wait();
             toaster.push(
                 <Message showIcon type="success" closable >
-                    Worker rated successfully!
+                    Worker Rated successfully!
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            setRating("");
+            setRating(0);
             setJobId("");
             setRole("worker");
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    {error.message}
+                    Cannot Rate.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
@@ -113,9 +111,14 @@ const Rating = () => {
             const { contract } = await getBlockchain();
             const tx = await contract.getClientStats(address);
             setPressed(true);
-            setStatRating(tx.averageRating);
+            setStatRating(tx[0]);
         } catch (error) {
-            toast.error(`Transaction failed: ${error.reason}`);
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Failed to Fetch.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
@@ -137,23 +140,27 @@ const Rating = () => {
             const { contract } = await getBlockchain();
             const tx = await contract.getWorkerStats(address);
             setPressed(true);
-            setStatRating(tx[0]);
-            setTask(tx[1]);
+            setTask(tx[0]);
+            setStatRating(tx[1]);
         } catch (error) {
-            if (!jobId || !rating) {
-                toaster.push(
-                    <Message showIcon type="error" closable>
-                        Failed to Fetch.
-                    </Message>,
-                    { placement: 'topCenter', duration: 8000 }
-                );
-                return;
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Failed to Fetch.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
+
+    const handleChange = (value) => {
+        setSRole(value);
+        setStatRating(0);
+        setTask(0);
+        setPressed(false);
+    }
 
     return (
         <Panel
@@ -216,7 +223,7 @@ const Rating = () => {
                     </Form.Group>
 
                     <Form.Group style={{ marginBottom: "2vh" }}>
-                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={srole} onChange={setSRole}>
+                        <RadioGroup name="radio-group-inline-picker-label" inline appearance="picker" value={srole} onChange={handleChange}>
                             <RadioLabel>Role: </RadioLabel>
                             <Radio value="worker">Worker</Radio>
                             <Radio value="client">Client</Radio>
@@ -235,11 +242,11 @@ const Rating = () => {
                     <Form.Group style={{ marginBottom: "2vh" }}>
                         <Form.ControlLabel style={{ marginBottom: "1vh" }}>
                             {srole === "worker" ? (
-                                <>Number of Jobs Done:  {pressed ? (tasks ? tasks : "No Job Completed") : ""}</>
+                                <>Number of Jobs Done:  {pressed ? (tasks ? parseFloat(tasks) : "No Job Completed") : ""}</>
                             ) : null}
                         </Form.ControlLabel>
                         <Form.ControlLabel>
-                            Average Rating:  {pressed ? (statsrating ? statsrating : "No Rating") : ""}
+                            Average Rating:  {pressed ? (statsrating ? parseFloat(statsrating) : "No Rating") : ""}
                         </Form.ControlLabel>
                     </Form.Group>
                 </Form>

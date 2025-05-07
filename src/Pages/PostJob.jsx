@@ -63,7 +63,6 @@ const PostJob = () => {
         setPayLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateCall(contract, "releasePayment", [jobId]);
             const tx = await contract.releasePayment(jobId);
             await tx.wait();
             toaster.push(
@@ -76,7 +75,7 @@ const PostJob = () => {
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    {error.message}
+                    Payment Transfer Failed.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
