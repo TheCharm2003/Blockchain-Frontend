@@ -13,7 +13,6 @@ const Home = () => {
         const { signer } = await getBlockchain();
         setAddress(signer.address);
       } catch (error) {
-        console.error(error);
         toaster.push(
           <Message showIcon type="error" closable >
               Cannot Connect to Metamask

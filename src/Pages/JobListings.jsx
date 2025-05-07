@@ -31,7 +31,6 @@ const JobListings = () => {
                 }));
                 setJobs(formattedJobs);
             } catch (error) {
-                console.error(error);
                 toaster.push(
                     <Message showIcon type="error" closable>
                         Unknown Error

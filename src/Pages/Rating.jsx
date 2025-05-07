@@ -50,7 +50,6 @@ const Rating = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setRatingLoading(false);
         }
@@ -90,7 +89,6 @@ const Rating = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setRatingLoading(false);
         }
@@ -111,7 +109,7 @@ const Rating = () => {
             const { contract } = await getBlockchain();
             const tx = await contract.getClientStats(address);
             setPressed(true);
-            setStatRating(tx[0]);
+            setStatRating(tx);
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
@@ -149,7 +147,6 @@ const Rating = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setLoading(false);
         }

@@ -34,11 +34,10 @@ const RegisterWorker = () => {
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    Worker Already Registered
+                    Worker Already Registered.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, Panel } from "rsuite";
+import { Button, Form, Panel, toaster, Message } from "rsuite";
 import { toast } from "react-toastify";
 import { getBlockchain } from "../Components/Blockchain";
 
@@ -14,18 +14,28 @@ const Dispute = () => {
 
     const checkDisputeStatus = async () => {
         if (!jobId) {
-            toast.error("Please enter a Job ID.");
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Fill Job ID.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             return;
         }
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
             const job = await contract.getJob(jobId);
-            setDisputeRaised(job.disputeRaised);
-            setPaid(job.isPaid);
+            setPaid(job[5]);
+            setDisputeRaised(job[6]);
             setPressed(true);
         } catch (error) {
-            toast.error("Error fetching job details");
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Failed to Fetch Job.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setLoading(false);
@@ -33,22 +43,30 @@ const Dispute = () => {
     };
 
     const raiseDispute = async () => {
-        if (!jobId) {
-            toast.error("Please enter a Job ID.");
-            return;
-        }
+        toaster.push(
+            <Message showIcon type="error" closable>
+                Fill Job ID.
+            </Message>,
+            { placement: 'topCenter', duration: 8000 }
+        );
         setDisputeLoading(true);
         try {
             const { contract } = await getBlockchain();
             const tx = await contract.raiseDispute(jobId);
             await tx.wait();
-            toast.success("Dispute raised successfully!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Dispute Raised Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Error: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Failed to Raise Dispute.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setDisputeLoading(false);
@@ -57,7 +75,12 @@ const Dispute = () => {
 
     const resolveDispute = async () => {
         if (!jobId) {
-            toast.error("Please enter a Job ID.");
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Fill Job ID.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             return;
         }
         setResLoading(true);
@@ -65,13 +88,19 @@ const Dispute = () => {
             const { contract } = await getBlockchain();
             const tx = await contract.resolveDispute(jobId);
             await tx.wait();
-            toast.success("Dispute resolved successfully!");
+            toaster.push(
+                <Message showIcon type="success" closable>
+                    Dispute Resolved Successfully!
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
         } catch (error) {
-            if (error.reason) {
-                toast.error(`Error: ${error.reason}`);
-            } else {
-                toast.error("An unexpected error occurred.");
-            }
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Failed to Reslove Dispute.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
             console.error(error);
         } finally {
             setResLoading(false);
@@ -97,7 +126,11 @@ const Dispute = () => {
                 </Form.Group>
                 <Form.Group style={{ marginBottom: "2vh" }}>
                     <Form.ControlLabel>
-                        Dispute Status: {pressed ? (disputeRaised ? (paid ? "Dispute Resolved" : "Dispute Raised") : "No Dispute") : ""}
+                        Dispute Status: {
+                            disputeRaised
+                                ? (paid ? "Dispute Resolved" : "Dispute Raised")
+                                : (paid ? "Payment Released" : "Not Disputed")
+                        }
                     </Form.ControlLabel>
                 </Form.Group>
                 <Button
@@ -107,7 +140,7 @@ const Dispute = () => {
                 >
                     {loading ? "Checking..." : "Check Status"}
                 </Button>
-                {!disputeRaised && pressed && (
+                {!paid && !disputeRaised && pressed && (
                     <Button
                         appearance="primary"
                         onClick={raiseDispute}
@@ -117,7 +150,8 @@ const Dispute = () => {
                         {disputeloading ? "Raising..." : "Raise Dispute"}
                     </Button>
                 )}
-                {disputeRaised && pressed && (
+
+                {disputeRaised && !paid && pressed && (
                     <Button
                         appearance="primary"
                         onClick={resolveDispute}

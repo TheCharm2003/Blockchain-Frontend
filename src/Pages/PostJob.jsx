@@ -53,7 +53,6 @@ const PostJob = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -79,7 +78,6 @@ const PostJob = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setPayLoading(false);
         }

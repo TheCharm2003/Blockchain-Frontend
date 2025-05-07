@@ -33,8 +33,7 @@ const JobApplication = () => {
                     Cannot Assign Job.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
-            );
-            console.error(error);
+            )
         } finally {
             setLoading(false);
         }
@@ -72,7 +71,6 @@ const JobApplication = () => {
                 setJobs(finalJobs);
             }
         } catch (error) {
-            console.error("Error fetching:", error);
             toaster.push(
                 <Message showIcon type="error" closable>
                     Unknown Error.
@@ -154,8 +152,8 @@ const JobApplication = () => {
                     <HeaderCell>ID</HeaderCell>
                     <Cell>{(rowData) => rowData.id}</Cell>
                 </Column>
-                <Column width={380}>
-                    <HeaderCell>Worker Name</HeaderCell>
+                <Column width={390}>
+                    <HeaderCell>Worker</HeaderCell>
                     <Cell>{(rowData) => rowData.worker}</Cell>
                 </Column>
                 <Column width={100}>
@@ -170,19 +168,19 @@ const JobApplication = () => {
                     <HeaderCell>Payment (ETH)</HeaderCell>
                     <Cell>{(rowData) => rowData.payment}</Cell>
                 </Column>
-                <Column width={80}>
+                <Column width={75}>
                     <HeaderCell>Completed</HeaderCell>
                     <Cell>{(rowData) => (rowData.isCompleted ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={70}>
+                <Column width={55}>
                     <HeaderCell>Paid</HeaderCell>
                     <Cell>{(rowData) => (rowData.isPaid ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={70}>
+                <Column width={65}>
                     <HeaderCell>Disputed</HeaderCell>
                     <Cell>{(rowData) => (rowData.disputeRaised ? 'Yes' : 'No')}</Cell>
                 </Column>
-                <Column width={380}>
+                <Column width={390}>
                     <HeaderCell>Applicants</HeaderCell>
                     <Cell>
                         {(rowData) => rowData.applicants?.join(', ') || 'N/A'}

@@ -37,7 +37,6 @@ const Actions = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -72,7 +71,6 @@ const Actions = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setComLoading(false);
         }
