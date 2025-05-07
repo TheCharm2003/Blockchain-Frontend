@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Form, Col, Panel, Divider, toaster, Message } from "rsuite";
-import { toast } from "react-toastify";
 import { getBlockchain, simulateCall } from "../Components/Blockchain";
 
 const Actions = () => {
@@ -22,7 +21,6 @@ const Actions = () => {
                 );
                 return;
             }
-            await simulateCall(contract, "applyForJob", [accjobId]);
             const tx = await contract.applyForJob(accjobId);
             await tx.wait();
             toaster.push(
@@ -35,7 +33,7 @@ const Actions = () => {
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    {error.message}
+                    Transaction Failed.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
@@ -58,7 +56,6 @@ const Actions = () => {
                 );
                 return;
             }
-            await simulateCall(contract, "completeJob", [comjobId]);
             const tx = await contract.completeJob(comjobId);
             await tx.wait();
             toaster.push(
@@ -71,7 +68,7 @@ const Actions = () => {
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    {error.message}
+                    Cannot Be Marked Completed.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );

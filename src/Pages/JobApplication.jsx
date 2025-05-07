@@ -16,7 +16,6 @@ const JobApplication = () => {
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
-            await simulateCall(contract, "selectWorker", [jobId, address]);
             const tx = await contract.selectWorker(jobId, address);
             await tx.wait();
             toaster.push(
@@ -27,10 +26,11 @@ const JobApplication = () => {
             );
             setJobId("");
             setAddress("");
+            fetchData();
         } catch (error) {
             toaster.push(
-                <Message showIcon type="success" closable>
-                    Payment Released Successfully!
+                <Message showIcon type="error" closable>
+                    Cannot Assign Job.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
@@ -73,7 +73,12 @@ const JobApplication = () => {
             }
         } catch (error) {
             console.error("Error fetching:", error);
-            toast.error("Failed to fetch.");
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Unknown Error.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
         }
     }
 

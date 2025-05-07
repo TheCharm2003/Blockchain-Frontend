@@ -92,13 +92,22 @@ const Rating = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.log(error);
+            console.error(error);
         } finally {
             setRatingLoading(false);
         }
     };
 
     const clientstats = async () => {
+        if (!address || !srole) {
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Please fill in all fields.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
+            return;
+        }
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
@@ -114,16 +123,32 @@ const Rating = () => {
     };
 
     const workerstats = async () => {
+        if (!address || !srole) {
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Please fill in all fields.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
+            return;
+        }
         setLoading(true);
         try {
             const { contract } = await getBlockchain();
             const tx = await contract.getWorkerStats(address);
-            console.log(tx);
             setPressed(true);
-            setStatRating(tx.averageRating);
-            setTask(tx.completedJobs);
+            setStatRating(tx[0]);
+            setTask(tx[1]);
         } catch (error) {
-            toast.error(`Transaction failed: ${error.reason}`);
+            if (!jobId || !rating) {
+                toaster.push(
+                    <Message showIcon type="error" closable>
+                        Failed to Fetch.
+                    </Message>,
+                    { placement: 'topCenter', duration: 8000 }
+                );
+                return;
+            }
             console.error(error);
         } finally {
             setLoading(false);
@@ -210,11 +235,11 @@ const Rating = () => {
                     <Form.Group style={{ marginBottom: "2vh" }}>
                         <Form.ControlLabel style={{ marginBottom: "1vh" }}>
                             {srole === "worker" ? (
-                                <>Number of Jobs Done: {pressed ? (tasks ? tasks : "No Job Completed") : ""}</>
+                                <>Number of Jobs Done:  {pressed ? (tasks ? tasks : "No Job Completed") : ""}</>
                             ) : null}
                         </Form.ControlLabel>
                         <Form.ControlLabel>
-                            Average Rating: {pressed ? (statsrating ? statsrating : "No Rating") : ""}
+                            Average Rating:  {pressed ? (statsrating ? statsrating : "No Rating") : ""}
                         </Form.ControlLabel>
                     </Form.Group>
                 </Form>
