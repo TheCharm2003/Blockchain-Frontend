@@ -43,12 +43,14 @@ const Dispute = () => {
     };
 
     const raiseDispute = async () => {
-        toaster.push(
-            <Message showIcon type="error" closable>
-                Fill Job ID.
-            </Message>,
-            { placement: 'topCenter', duration: 8000 }
-        );
+        if (!jobId) {
+            toaster.push(
+                <Message showIcon type="error" closable>
+                    Fill Job ID.
+                </Message>,
+                { placement: 'topCenter', duration: 8000 }
+            );
+        }
         setDisputeLoading(true);
         try {
             const { contract } = await getBlockchain();
@@ -60,6 +62,7 @@ const Dispute = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
+            checkDisputeStatus();
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
@@ -67,7 +70,6 @@ const Dispute = () => {
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
         } finally {
             setDisputeLoading(false);
         }
@@ -97,11 +99,11 @@ const Dispute = () => {
         } catch (error) {
             toaster.push(
                 <Message showIcon type="error" closable>
-                    Failed to Reslove Dispute.
+                    Failed to Reslove Dispute. Only Owner Function.
                 </Message>,
                 { placement: 'topCenter', duration: 8000 }
             );
-            console.error(error);
+            checkDisputeStatus();
         } finally {
             setResLoading(false);
         }
